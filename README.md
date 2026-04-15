@@ -50,6 +50,7 @@ Elle a pour objectif de simplifier l’organisation et la participation aux év�
 ```
 
 - Communication via JSON
+- API versionnée (`/api/v1`)
 - Authentification par JWT
 
 
