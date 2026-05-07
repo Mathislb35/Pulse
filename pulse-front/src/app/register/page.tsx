@@ -35,18 +35,10 @@ export default function RegisterPage() {
         <main className="min-h-screen bg-[#080810] flex items-center justify-center px-4">
             <div className="w-full max-w-md">
 
-                {/* Logo */}
-                <div className="flex items-center gap-2 justify-center mb-8">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#ff3c6e] shadow-[0_0_12px_#ff3c6e] animate-pulse" />
-                    <span className="text-white font-bold text-2xl tracking-tight">
-            Pulse
-          </span>
-                </div>
-
                 {/* Card */}
                 <div className="bg-[#0f0f1a] border border-white/10 rounded-2xl p-8">
                     <h1 className="text-white text-2xl font-bold mb-1">Créer un compte</h1>
-                    <p className="text-white/40 text-sm mb-8">Rejoins la communauté Pulse 🎉</p>
+                    <p className="text-white/40 text-sm mb-8">Rejoins la communauté Pulse</p>
 
                     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
@@ -122,16 +114,14 @@ export default function RegisterPage() {
                         >
                             {loading ? 'Création...' : 'Créer mon compte'}
                         </button>
-
+                        <p className="text-white/30 text-sm text-center mt-6">
+                            Déjà un compte ?{' '}
+                            <Link href="/login" className="text-[#ff3c6e] hover:underline">
+                                Se connecter
+                            </Link>
+                        </p>
                     </form>
                 </div>
-
-                <p className="text-white/30 text-sm text-center mt-6">
-                    Déjà un compte ?{' '}
-                    <Link href="/login" className="text-[#ff3c6e] hover:underline">
-                        Se connecter
-                    </Link>
-                </p>
 
             </div>
         </main>
