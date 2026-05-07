@@ -1,10 +1,10 @@
 import { Injectable, 
          UnauthorizedException, 
-         BadRequestException, 
-         ConflictException } from '@nestjs/common';
+         BadRequestException } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -31,20 +31,19 @@ export class AuthService {
     };
   }
 
-  async signUp(nom: string,email: string, password: string, phone: string): Promise<string> {
+  async signUp(nom: string, email: string, password: string, phone: string): Promise<string> {
     if (!nom || !password ||!email || !phone) {
       throw new BadRequestException('Nom, email ou mot de passe requis.');
     }
-    const verifyUserName = await this.usersService.findOneByEmail(email);
-    if (verifyUserName) {
-      throw new ConflictException("Cet email est déjà utilisé.");
-    }
-    if (password) {
-      const saltOrRounds = 10;
-      const hash = await bcrypt.hash(password, saltOrRounds);
-      await this.usersService.create(nom, email, hash, phone);
-      return 'Utilisateur ' + nom + ' créé avec succès.';
-    }
-    return "Erreur lors de la création de l'utilisateur.";
+
+    const userToCreate: CreateUserDto = {
+      nom,
+      email,
+      password,
+      phone,
+    };
+
+    await this.usersService.create(userToCreate);
+    return 'Utilisateur ' + nom + ' créé avec succès.';
   }
 }
