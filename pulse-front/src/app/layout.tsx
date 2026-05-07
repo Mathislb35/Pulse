@@ -22,6 +22,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="fr">
+        <title>
+            Pulse
+        </title>
         <body>
         <Navbar />
         <div className="pt-16">
