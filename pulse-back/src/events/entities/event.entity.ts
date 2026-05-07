@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Users } from '../../users/entities/user.entity';
+import { Commune } from '../../communes/entities/commune.entity';
 
 @Entity({ name: 'events' })
 export class Event {
@@ -23,6 +24,10 @@ export class Event {
 
   @Column({ name: 'id_commune' })
   id_commune!: number;
+
+  @ManyToOne(() => Commune, { eager: false, nullable: false })
+  @JoinColumn({ name: 'id_commune', referencedColumnName: 'id' })
+  commune!: Commune;
 
   @Column({ name: 'organizerId', nullable: true })
   organizerId!: number;
