@@ -49,7 +49,7 @@ export class Ride {
   user!: Users;
 
   @ManyToOne(() => Event, { eager: false, nullable: false })
-  @JoinColumn({ name: 'id_events', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'id_events', referencedColumnName: 'id_events' })
   event!: Event;
 
   @OneToMany(() => ReservationRide, (reservation) => reservation.ride)
