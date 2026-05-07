@@ -1,5 +1,6 @@
 import { Event } from '../../events/entities/event.entity';
 import { Users } from '../../users/entities/user.entity';
+import { Commune } from '../../communes/entities/commune.entity';
 import {
   Column,
   Entity,
@@ -37,6 +38,14 @@ export class Ride {
 
   @Column({ name: 'arrival_commune_id' })
   arrival_commune_id!: number;
+
+  @ManyToOne(() => Commune, { eager: false, nullable: false })
+  @JoinColumn({ name: 'departure_commune_id', referencedColumnName: 'id' })
+  departure_commune!: Commune;
+
+  @ManyToOne(() => Commune, { eager: false, nullable: false })
+  @JoinColumn({ name: 'arrival_commune_id', referencedColumnName: 'id' })
+  arrival_commune!: Commune;
 
   @Column({ name: 'id_users' })
   id_users!: number;
