@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { MessageSquare, Car, Home, Search, SlidersHorizontal } from 'lucide-react';
 import {useState} from "react";
 
+import EventDetailModal from "../component/modal_event";
+
 const SERVICES = [
     {
         icon: <Home className="w-5 h-5 text-[#ff3c6e]" />,
@@ -88,6 +90,8 @@ export default function HomePage() {
     const [activeCategory, setActiveCategory] = useState('Tous');
     const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
     const [selectedMonths, setSelectedMonths] = useState<string[]>([]);
+
+    const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
     return (
         <main className="min-h-screen bg-[#080810] flex flex-col px-6 py-10 gap-12">
@@ -214,6 +218,7 @@ export default function HomePage() {
                     {EVENTS.map((event) => (
                         <div
                             key={event.id}
+                            onClick={() => setSelectedEvent(event)}
                             className="bg-[#0f0f1a] border border-white/10 hover:border-[#ff3c6e] rounded-2xl overflow-hidden transition-colors cursor-pointer group"
                         >
                             {/* Image */}
@@ -262,7 +267,12 @@ export default function HomePage() {
                 </Link>
 
             </div>
-
+            {selectedEvent && (
+                <EventDetailModal
+                    event={selectedEvent}
+                    onClose={() => setSelectedEvent(null)}
+                />
+            )}
         </main>
     );
 }
