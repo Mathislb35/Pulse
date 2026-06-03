@@ -16,6 +16,7 @@ import { CreateRideReservationDto } from './dto/create-ride-reservation.dto';
 import { UpdateRideDto } from './dto/update-ride.dto';
 import { UpdateRideReservationDto } from './dto/update-ride-reservation.dto';
 import { RideFiltersDto } from './dto/ride-filters.dto';
+import { Public } from '../auth/public.decorator';
 
 @Controller('rides')
 export class RidesController {
@@ -29,11 +30,13 @@ export class RidesController {
     return this.ridesService.create(createRideDto, req.user.id);
   }
 
+  @Public()
   @Get()
   findAll(@Query() filters: RideFiltersDto) {
     return this.ridesService.findAll(filters);
   }
 
+  @Public()
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.ridesService.findOne(id);
