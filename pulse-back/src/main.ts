@@ -16,7 +16,7 @@ async function bootstrap() {
 
   // ✅ Activer CORS pour ton front local
   app.enableCors({
-    origin: 'http://localhost:3000', // change selon le port de ton Next.js
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
@@ -32,8 +32,9 @@ async function bootstrap() {
 
   SwaggerModule.setup('api', app as any, document);
 
-  await app.listen(3001);
-  console.log(`Swagger disponible sur: http://localhost:3001/api`);
+  const port = process.env.PORT || 3001;
+  await app.listen(port);
+  console.log(`Swagger disponible sur: http://localhost:${port}/api`);
 }
 
 bootstrap();
