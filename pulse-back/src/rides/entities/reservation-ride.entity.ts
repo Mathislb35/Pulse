@@ -22,8 +22,13 @@ export class ReservationRide {
   @Column({ name: 'seats_reserved' })
   seats_reserved!: number;
 
-  @Column({ name: 'status', length: 50 })
-  status!: string;
+  @Column({
+    name: 'status',
+    type: 'enum',
+    enum: ['pending', 'confirmed', 'cancelled'],
+    default: 'pending',
+  })
+  status!: 'pending' | 'confirmed' | 'cancelled';
 
   @Column({ name: 'id_rides' })
   id_rides!: number;

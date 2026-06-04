@@ -1,7 +1,7 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty } from 'class-validator';
 
 export class UpdateRideReservationDto {
-  @IsString()
+  @IsEnum(['pending', 'confirmed', 'cancelled'])
   @IsNotEmpty()
-  status!: string;
+  status!: 'pending' | 'confirmed' | 'cancelled';
 }

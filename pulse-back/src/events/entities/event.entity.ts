@@ -32,7 +32,7 @@ export class Event {
   id_commune!: number;
 
   @ManyToOne(() => Commune, { eager: false, nullable: false })
-  @JoinColumn({ name: 'id_commune', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'id_commune', referencedColumnName: 'id_commune' })
   commune!: Commune;
 
   @Column({ name: 'organizerId', nullable: true })

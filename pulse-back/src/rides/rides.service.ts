@@ -167,14 +167,14 @@ export class RidesService {
     }
 
     // Check available seats
-    const acceptedReservations = await this.reservationsRepository.find({
+    const confirmedReservations = await this.reservationsRepository.find({
       where: {
         id_rides: rideId,
-        status: 'accepted',
+        status: 'confirmed',
       },
     });
 
-    const reservedSeats = acceptedReservations.reduce(
+    const reservedSeats = confirmedReservations.reduce(
       (sum, res) => sum + res.seats_reserved,
       0,
     );
@@ -208,15 +208,18 @@ export class RidesService {
 
     const reservation = await this.getReservationOrFail(rideId, reservationId);
 
-    if (updateReservationDto.status === 'accepted' && reservation.status !== 'accepted') {
-      const acceptedReservations = await this.reservationsRepository.find({
+    if (
+      updateReservationDto.status === 'confirmed' &&
+      reservation.status !== 'confirmed'
+    ) {
+      const confirmedReservations = await this.reservationsRepository.find({
         where: {
           id_rides: rideId,
-          status: 'accepted',
+          status: 'confirmed',
         },
       });
 
-      const reservedSeats = acceptedReservations.reduce(
+      const reservedSeats = confirmedReservations.reduce(
         (sum, res) => sum + res.seats_reserved,
         0,
       );

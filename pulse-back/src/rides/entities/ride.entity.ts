@@ -40,11 +40,11 @@ export class Ride {
   arrival_commune_id!: number;
 
   @ManyToOne(() => Commune, { eager: false, nullable: false })
-  @JoinColumn({ name: 'departure_commune_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'departure_commune_id', referencedColumnName: 'id_commune' })
   departure_commune!: Commune;
 
   @ManyToOne(() => Commune, { eager: false, nullable: false })
-  @JoinColumn({ name: 'arrival_commune_id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'arrival_commune_id', referencedColumnName: 'id_commune' })
   arrival_commune!: Commune;
 
   @Column({ name: 'id_users' })

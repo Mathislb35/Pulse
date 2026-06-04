@@ -2,11 +2,8 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'commune' })
 export class Commune {
-  @PrimaryGeneratedColumn({ name: 'id' })
-  id!: number;
-
-  @Column({ name: 'insee_code', length: 10, nullable: true })
-  insee_code!: string;
+  @PrimaryGeneratedColumn({ name: 'id_commune' })
+  id_commune!: number;
 
   @Column({ name: 'name', length: 50, nullable: true })
   name!: string;
