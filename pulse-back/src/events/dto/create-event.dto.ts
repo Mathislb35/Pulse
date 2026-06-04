@@ -15,6 +15,15 @@ export class CreateEventDto {
   @IsOptional()
   location?: string;
 
+  @IsString()
+  @IsOptional()
+  @MaxLength(50)
+  category?: string;
+
+  @IsString()
+  @IsOptional()
+  image_url?: string;
+
   @IsDateString()
   @IsNotEmpty()
   start_date!: string;

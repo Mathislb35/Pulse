@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, MinLength } from 'class-validator';
+import { IsString, IsNotEmpty, MinLength, IsEmail } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -10,11 +10,10 @@ export class CreateUserDto {
   @MinLength(8, { message: 'Le mot de passe doit faire au moins 8 caractères' })
   password!: string;
   
-  @IsString()
+  @IsEmail({}, { message: "Email invalide" })
   @IsNotEmpty({ message: "L'email est requis" })
   email!: string;
 
   @IsString()
-  @IsNotEmpty({ message: "Le numéro de téléphone est requis" })
-  phone!: string;
+  phone?: string;
 }

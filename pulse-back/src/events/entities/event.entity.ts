@@ -16,6 +16,12 @@ export class Event {
   @Column({ name: 'location', type: 'text', nullable: true })
   location!: string;
 
+  @Column({ name: 'category', length: 50, nullable: true })
+  category!: string;
+
+  @Column({ name: 'image_url', type: 'text', nullable: true })
+  image_url!: string;
+
   @Column({ name: 'start_date', type: 'datetime' })
   start_date!: Date;
 

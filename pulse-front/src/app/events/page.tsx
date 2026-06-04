@@ -1,23 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, SlidersHorizontal } from 'lucide-react';
+import api from "../../lib/axios";
+import EventDetailModal from "../../component/modal_event";
 
-// Données fictives — à remplacer par un appel API vers GET /api/events
-const EVENTS = [
-    { id: 1, title: 'Nuit Électro — Warehouse', location: 'Paris, 19e', category: 'Concert', image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&q=80' },
-    { id: 2, title: 'Festival Solstice', location: "Lyon, Parc de la Tête d'Or", category: 'Festival', image: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?w=400&q=80' },
-    { id: 3, title: 'Soirée Rooftop', location: 'Marseille, Le Vieux-Port', category: 'Soiree', image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&q=80' },
-    { id: 4, title: 'Dev Meetup Pulse', location: 'Nantes, La Cantine', category: 'Soiree', image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&q=80' },
-    { id: 5, title: 'Vieille Charue', location: 'Carhaix, Bretagne', category: 'Festival', image: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&q=80' },
-    { id: 6, title: 'Jazz en Cave', location: 'Bordeaux, Saint-Pierre', category: 'Concert', image: 'https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&q=80' },
-    { id: 7, title: 'Run & Trail', location: 'Annecy, Lac', category: 'Sport', image: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&q=80' },
-    { id: 8, title: 'Tech Summit', location: 'Paris, Station F', category: 'Conference', image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&q=80' },
-    { id: 9, title: 'Electro Parade', location: 'Lyon, Presqu\'île', category: 'Concert', image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&q=80' },
-    { id: 10, title: 'Hellfest', location: 'Clisson, Loire-Atlantique', category: 'Festival', image: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?w=400&q=80' },
-    { id: 11, title: 'Startup Weekend', location: 'Bordeaux, Darwin', category: 'Conference', image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&q=80' },
-    { id: 12, title: 'Triathlon Côte d\'Azur', location: 'Nice, Promenade', category: 'Sport', image: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&q=80' },
-];
+interface Event {
+    id_events: number;
+    title: string;
+    location: string;
+    category: string;
+    image_url: string;
+    start_date: string;
+    end_date: string;
+    description?: string;
+}
 
 const CATEGORY_STYLES: Record<string, string> = {
     Concert:    'bg-[#ff3c6e]/10 text-[#ff3c6e] border-[#ff3c6e]/20',
@@ -32,17 +29,34 @@ const LOCATIONS   = ['Paris', 'Lyon', 'Marseille', 'Nantes', 'Bordeaux', 'Grenob
 const MONTHS      = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
 export default function EventsPage() {
-    const [search, setSearch]                     = useState('');
-    const [activeCategory, setActiveCategory]     = useState('Tous');
+    const [events, setEvents] = useState<Event[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState('');
+    const [activeCategory, setActiveCategory] = useState('Tous');
     const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
-    const [selectedMonths, setSelectedMonths]     = useState<string[]>([]);
+    const [selectedMonths, setSelectedMonths] = useState<string[]>([]);
+    const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const { data } = await api.get('/events');
+                setEvents(data);
+            } catch (err) {
+                console.error("Erreur lors de la récupération des événements:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchEvents();
+    }, []);
 
     const toggle = (list: string[], setList: (v: string[]) => void, value: string) => {
         setList(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
     };
 
-    const filtered = EVENTS.filter((e) => {
-        const matchSearch   = e.title.toLowerCase().includes(search.toLowerCase()) || e.location.toLowerCase().includes(search.toLowerCase());
+    const filtered = events.filter((e) => {
+        const matchSearch = e.title.toLowerCase().includes(search.toLowerCase()) || e.location.toLowerCase().includes(search.toLowerCase());
         const matchCategory = activeCategory === 'Tous' || e.category === activeCategory;
         const matchLocation = selectedLocations.length === 0 || selectedLocations.some((l) => e.location.includes(l));
         return matchSearch && matchCategory && matchLocation;
@@ -112,26 +126,33 @@ export default function EventsPage() {
 
                     {/* Grille événements */}
                     <div className="flex-1">
-                        {filtered.length > 0 ? (
+                        {loading ? (
+                            <div className="w-full py-20 flex justify-center">
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ff3c6e]"></div>
+                            </div>
+                        ) : filtered.length > 0 ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                                 {filtered.map((event) => (
                                     <div
-                                        key={event.id}
+                                        key={event.id_events}
+                                        onClick={() => setSelectedEvent(event)}
                                         className="bg-[#0f0f1a] border border-white/10 hover:border-[#ff3c6e]/40 rounded-2xl overflow-hidden transition-colors cursor-pointer group"
                                     >
                                         {/* Image */}
                                         <div className="h-44 overflow-hidden">
                                             <img
-                                                src={event.image}
+                                                src={event.image_url || 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&q=80'}
                                                 alt={event.title}
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                             />
                                         </div>
                                         {/* Infos */}
                                         <div className="p-4 flex flex-col gap-2">
-                      <span className={`w-fit text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border ${CATEGORY_STYLES[event.category] ?? 'bg-white/5 text-white/40 border-white/10'}`}>
-                        {event.category}
-                      </span>
+                                            {event.category && (
+                                                <span className={`w-fit text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border ${CATEGORY_STYLES[event.category] ?? 'bg-white/5 text-white/40 border-white/10'}`}>
+                                                    {event.category}
+                                                </span>
+                                            )}
                                             <h3 className="text-white font-bold text-base leading-snug">{event.title}</h3>
                                             <p className="text-white/40 text-xs">📍 {event.location}</p>
                                         </div>
@@ -208,9 +229,15 @@ export default function EventsPage() {
 
                         </div>
                     </div>
-
                 </div>
             </div>
+
+            {selectedEvent && (
+                <EventDetailModal
+                    event={selectedEvent}
+                    onClose={() => setSelectedEvent(null)}
+                />
+            )}
         </main>
     );
 }
