@@ -6,6 +6,7 @@ import React from "react";
 import {
     Home,
     Megaphone,
+    Car,
     MessagesSquare,
     Send,
     Briefcase,
