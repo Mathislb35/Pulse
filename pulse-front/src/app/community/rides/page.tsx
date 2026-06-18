@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { Search, SlidersHorizontal, Clock, Users } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import api from '../../../lib/axios';
 import RideDetailModal from '../../../component/modal_ride';
 import CreateRideModal from '../../../component/modal-create-ride';
+import { useAuth } from '../../../hooks/useAuth';
 
 interface User {
   id: number;
@@ -40,6 +42,8 @@ export default function RidesPage() {
   const [arrivalSearch, setArrivalSearch] = useState('');
   const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const { isAuthenticated, requireAuth } = useAuth();
+  const router = useRouter();
 
   const fetchRides = async () => {
     try {
@@ -78,12 +82,21 @@ export default function RidesPage() {
               Trouvez un covoiturage pour vous rendre à vos événements.
             </p>
           </div>
-          <button 
-            onClick={() => setShowCreateModal(true)}
-            className="bg-[#ff3c6e] text-white font-bold px-5 py-2.5 rounded-xl text-sm cursor-pointer hover:bg-[#e0203d] transition-colors"
-          >
-            Proposer un trajet
-          </button>
+          {isAuthenticated ? (
+            <button 
+              onClick={() => setShowCreateModal(true)}
+              className="bg-[#ff3c6e] text-white font-bold px-5 py-2.5 rounded-xl text-sm cursor-pointer hover:bg-[#e0203d] transition-colors"
+            >
+              Proposer un trajet
+            </button>
+          ) : (
+            <button 
+              onClick={() => router.push('/login')}
+              className="bg-[#ff3c6e] text-white font-bold px-5 py-2.5 rounded-xl text-sm cursor-pointer hover:bg-[#e0203d] transition-colors"
+            >
+              Se connecter pour proposer
+            </button>
+          )}
         </div>
 
         {/* Barre de recherche */}
@@ -151,6 +164,13 @@ export default function RidesPage() {
                       <p className="text-white/40 text-xs leading-relaxed">
                         {ride.description}
                       </p>
+
+                      {/* Badge de connexion pour réservation */}
+                      {!isAuthenticated && (
+                        <div className="mt-2 p-2 bg-white/5 border border-white/10 rounded-lg text-center">
+                          <p className="text-white/50 text-xs">Connectez-vous pour réserver</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

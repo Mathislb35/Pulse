@@ -1,7 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { X, MapPin, Calendar, Clock, Users, ChevronLeft, MessageCircle } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 interface User {
   id: number;
@@ -36,6 +38,8 @@ interface Props {
 
 export default function RideDetailModal({ ride, onClose }: Props) {
   const [seatsToReserve, setSeatsToReserve] = useState(1);
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -132,36 +136,50 @@ export default function RideDetailModal({ ride, onClose }: Props) {
           <div className="mb-6">
             <p className="text-white font-bold text-sm uppercase tracking-widest mb-3">Réserver</p>
             <div className="bg-[#0f0f1e] border border-white/8 rounded-xl p-4">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <p className="text-white font-medium">{ride.available_seats} places disponibles</p>
-                  <p className="text-white/30 text-xs">Ne manquez pas votre place !</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setSeatsToReserve(Math.max(1, seatsToReserve - 1))}
-                    className="w-8 h-8 rounded-full bg-white/5 border border-white/10 text-white/50 hover:border-[#ff3c6e]/40 hover:text-[#ff3c6e] transition-all"
+              {isAuthenticated ? (
+                <>
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-white font-medium">{ride.available_seats} places disponibles</p>
+                      <p className="text-white/30 text-xs">Ne manquez pas votre place !</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setSeatsToReserve(Math.max(1, seatsToReserve - 1))}
+                        className="w-8 h-8 rounded-full bg-white/5 border border-white/10 text-white/50 hover:border-[#ff3c6e]/40 hover:text-[#ff3c6e] transition-all"
+                      >
+                        -
+                      </button>
+                      <span className="text-white font-bold w-8 text-center">{seatsToReserve}</span>
+                      <button
+                        onClick={() => setSeatsToReserve(Math.min(ride.available_seats, seatsToReserve + 1))}
+                        className="w-8 h-8 rounded-full bg-white/5 border border-white/10 text-white/50 hover:border-[#ff3c6e]/40 hover:text-[#ff3c6e] transition-all"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between pt-4 border-t border-white/8">
+                    <div>
+                      <p className="text-white/40 text-xs">Total</p>
+                      <p className="text-white font-bold text-lg">{ride.price * seatsToReserve} €</p>
+                    </div>
+                    <button className="bg-[#ff3c6e] hover:bg-[#e0203d] text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-colors">
+                      Réserver
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-6">
+                  <p className="text-white/50 text-sm mb-4">Connectez-vous pour réserver ce trajet</p>
+                  <button 
+                    onClick={() => { onClose(); router.push('/login'); }}
+                    className="bg-[#ff3c6e] hover:bg-[#e0203d] text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-colors"
                   >
-                    -
-                  </button>
-                  <span className="text-white font-bold w-8 text-center">{seatsToReserve}</span>
-                  <button
-                    onClick={() => setSeatsToReserve(Math.min(ride.available_seats, seatsToReserve + 1))}
-                    className="w-8 h-8 rounded-full bg-white/5 border border-white/10 text-white/50 hover:border-[#ff3c6e]/40 hover:text-[#ff3c6e] transition-all"
-                  >
-                    +
+                    Se connecter
                   </button>
                 </div>
-              </div>
-              <div className="flex items-center justify-between pt-4 border-t border-white/8">
-                <div>
-                  <p className="text-white/40 text-xs">Total</p>
-                  <p className="text-white font-bold text-lg">{ride.price * seatsToReserve} €</p>
-                </div>
-                <button className="bg-[#ff3c6e] hover:bg-[#e0203d] text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-colors">
-                  Réserver
-                </button>
-              </div>
+              )}
             </div>
           </div>
         </div>
