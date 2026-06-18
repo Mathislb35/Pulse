@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Search, SlidersHorizontal, Clock, Users } from 'lucide-react';
 import api from '../../../lib/axios';
 import RideDetailModal from '../../../component/modal_ride';
+import CreateRideModal from '../../../component/modal-create-ride';
 
 interface User {
   id: number;
@@ -28,7 +29,7 @@ interface Ride {
   id_users: number;
   id_events: number;
   user: User;
-  event: Event;
+  event?: Event | null;
 }
 
 export default function RidesPage() {
@@ -38,18 +39,20 @@ export default function RidesPage() {
   const [departureSearch, setDepartureSearch] = useState('');
   const [arrivalSearch, setArrivalSearch] = useState('');
   const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const fetchRides = async () => {
+    try {
+      const { data } = await api.get('/rides');
+      setRides(data);
+    } catch (err) {
+      console.error("Erreur lors de la récupération des trajets:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchRides = async () => {
-      try {
-        const { data } = await api.get('/rides');
-        setRides(data);
-      } catch (err) {
-        console.error("Erreur lors de la récupération des trajets:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchRides();
   }, []);
 
@@ -75,7 +78,10 @@ export default function RidesPage() {
               Trouvez un covoiturage pour vous rendre à vos événements.
             </p>
           </div>
-          <button className="bg-[#ff3c6e] text-white font-bold px-5 py-2.5 rounded-xl text-sm cursor-pointer">
+          <button 
+            onClick={() => setShowCreateModal(true)}
+            className="bg-[#ff3c6e] text-white font-bold px-5 py-2.5 rounded-xl text-sm cursor-pointer hover:bg-[#e0203d] transition-colors"
+          >
             Proposer un trajet
           </button>
         </div>
@@ -107,15 +113,15 @@ export default function RidesPage() {
                 {filtered.map((ride) => (
                   <div
                     key={ride.id_rides}
-                    onClick={() => setSelectedRide(ride)}
+                    onClick={() => ride.event && setSelectedRide(ride)}
                     className="bg-[#0f0f1a] border border-white/10 hover:border-[#ff3c6e]/40 rounded-2xl overflow-hidden transition-colors cursor-pointer group p-6"
                   >
                     <div className="flex flex-col gap-4">
                       {/* Header */}
                       <div className="flex items-start justify-between">
                         <div>
-                          <p className="text-white font-bold text-lg">{ride.event.title}</p>
-                          <p className="text-white/40 text-xs mt-1">📍 {ride.event.location}</p>
+                          <p className="text-white font-bold text-lg">{ride.event?.title || 'Événement'}</p>
+                          <p className="text-white/40 text-xs mt-1">📍 {ride.event?.location || 'Lieu'}</p>
                         </div>
                         <div className="text-right">
                           <p className="text-[#ff3c6e] font-bold text-xl">{ride.price} €</p>
@@ -217,6 +223,13 @@ export default function RidesPage() {
         <RideDetailModal
           ride={selectedRide}
           onClose={() => setSelectedRide(null)}
+        />
+      )}
+
+      {showCreateModal && (
+        <CreateRideModal
+          onClose={() => setShowCreateModal(false)}
+          onSuccess={fetchRides}
         />
       )}
     </main>

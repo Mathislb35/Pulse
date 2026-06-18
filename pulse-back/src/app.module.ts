@@ -9,6 +9,7 @@ import { RidesModule } from './rides/rides.module';
 import { MessagesModule } from './messages/messages.module';
 import { HousingModule } from './housing/housing.module';
 import { AuthModule } from './auth/auth.module';
+import { CommunesModule } from './communes/communes.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { AuthModule } from './auth/auth.module';
     RidesModule, 
     MessagesModule, 
     HousingModule, 
-    AuthModule],
+    AuthModule,
+    CommunesModule],
   
   controllers: [AppController],
   providers: [AppService],

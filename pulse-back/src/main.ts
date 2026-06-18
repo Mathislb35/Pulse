@@ -25,7 +25,14 @@ async function bootstrap() {
     .setTitle('Pulse API')
     .setDescription('API documentation pour la plateforme Pulse')
     .setVersion('1.0')
-    .addTag('pulse')
+    .addBearerAuth()
+    .addTag('auth', 'Authentification des utilisateurs')
+    .addTag('users', 'Gestion des utilisateurs')
+    .addTag('events', 'Gestion des événements')
+    .addTag('rides', 'Gestion des covoiturages')
+    .addTag('housing', 'Gestion des logements')
+    .addTag('communes', 'Gestion des communes')
+    .addTag('messages', 'Gestion des messages')
     .build();
 
   const document = SwaggerModule.createDocument(app as any, config);

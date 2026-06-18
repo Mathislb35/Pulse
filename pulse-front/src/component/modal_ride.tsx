@@ -26,7 +26,7 @@ interface Ride {
   id_users: number;
   id_events: number;
   user: User;
-  event: Event;
+  event?: Event | null;
 }
 
 interface Props {
@@ -72,8 +72,8 @@ export default function RideDetailModal({ ride, onClose }: Props) {
           <div className="flex flex-col gap-4 mb-6">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-white font-bold text-2xl">{ride.event.title}</p>
-                <p className="text-white/40 text-sm mt-1">📍 {ride.event.location}</p>
+                <p className="text-white font-bold text-2xl">{ride.event?.title || 'Événement'}</p>
+                <p className="text-white/40 text-sm mt-1">📍 {ride.event?.location || 'Lieu'}</p>
               </div>
               <div className="text-right">
                 <p className="text-[#ff3c6e] font-bold text-3xl">{ride.price} €</p>
@@ -99,7 +99,7 @@ export default function RideDetailModal({ ride, onClose }: Props) {
                 </div>
                 <div>
                   <p className="text-white font-medium">Arrivée</p>
-                  <p className="text-white/40 text-sm">{ride.event.location}</p>
+                  <p className="text-white/40 text-sm">{ride.event?.location || 'Lieu'}</p>
                 </div>
               </div>
             </div>
