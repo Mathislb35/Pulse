@@ -7,9 +7,17 @@ export class Users {
     @PrimaryGeneratedColumn({ name: 'id_users' })
     id!: number;
 
-    @ApiProperty({ description: 'Nom de l\'utilisateur', example: 'Jean Dupont' })
+    @ApiProperty({ description: 'Nom de l\'utilisateur', example: 'Dupont' })
     @Column({ name: 'nom' })
     nom!: string;
+
+    @ApiProperty({ description: 'Prénom de l\'utilisateur', example: 'Jean' })
+    @Column({ name: 'prenom' })
+    prenom!: string;
+
+    @ApiProperty({ description: 'Nom d\'utilisateur', example: 'jean.dupont' })
+    @Column({ name: 'username', unique: true, length: 190 })
+    username!: string;
 
     @ApiProperty({ description: 'Email de l\'utilisateur', example: 'jean.dupont@email.com' })
     @Column({ name: 'email', unique: true, length: 190 })
@@ -21,4 +29,8 @@ export class Users {
     @ApiProperty({ description: 'Numéro de téléphone', example: '0612345678', required: false })
     @Column({ name: 'phone', nullable: true })
     phone!: string;
+
+    @ApiProperty({ description: 'Date de naissance', example: '1996-07-14', required: false })
+    @Column({ name: 'date_de_naissance', type: 'date', nullable: true })
+    date_de_naissance!: Date;
 }

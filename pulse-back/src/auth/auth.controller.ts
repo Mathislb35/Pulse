@@ -38,13 +38,15 @@ export class AuthController {
   signUp(@Body() signUpDto: CreateUserDto) {
     return this.authService.signUp(
       signUpDto.nom,
+      signUpDto.prenom,
+      signUpDto.username,
       signUpDto.email,
       signUpDto.password,
       signUpDto.phone,
+      signUpDto.date_de_naissance,
     );
   }
 
-  @UseGuards(AuthGuard)
   @Get('profile')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Récupérer le profil de l\'utilisateur connecté' })

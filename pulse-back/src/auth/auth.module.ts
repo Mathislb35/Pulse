@@ -14,7 +14,7 @@ require('dotenv').config();
     UsersModule,
     JwtModule.register({
       global: true,
-      secret: process.env.JWT_SECRET,
+      secret: process.env.JWT_SECRET || 'fallback-secret-for-development-only-change-in-production',
       signOptions: { expiresIn: '3600s' },
     }),
   ],
@@ -22,5 +22,4 @@ require('dotenv').config();
   controllers: [AuthController],
   exports: [AuthService],
 })
-export class AuthModule {
-}
+export class AuthModule {}
