@@ -261,12 +261,14 @@ export default function HomePage() {
                         tristique at elit a, iaculis bibendum enim. Donec a augue dui.
                     </p>
                 </div>
-                <Link href="/register" className="bg-[#0f0f1a] border border-[#ff3c6e] hover:bg-[#e0203d] text-white font-bold px-6 py-3 rounded-xl transition-colors text-sm">
-                    Créer un compte
-                </Link>
-                <Link href="/login" className="bg-[#ff3c6e] hover:bg-[#e0203d] text-white font-bold px-6 py-3 rounded-xl transition-colors text-sm">
-                    Se connecter
-                </Link>
+                <div className="flex gap-3 items-center">
+                    <Link href="/register" className="bg-[#0f0f1a] border border-[#ff3c6e] hover:bg-[#e0203d] text-white font-bold px-6 py-3 rounded-xl transition-colors text-sm">
+                        Créer un compte
+                    </Link>
+                    <Link href="/login" className="bg-[#ff3c6e] hover:bg-[#e0203d] text-white font-bold px-6 py-3 rounded-xl transition-colors text-sm">
+                        Se connecter
+                    </Link>
+                </div>
 
             </div>
             {selectedEvent && (

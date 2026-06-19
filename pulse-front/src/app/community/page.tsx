@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Car, Home, Clock, Users, Search, SlidersHorizontal, Calendar } from 'lucide-react';
 import api from '../../lib/axios';
+import RideDetailModal from '../../component/modal_ride';
+import HousingDetailModal from '../../component/modal_housing';
 
 interface User {
   id: number;
@@ -24,7 +26,10 @@ interface Ride {
   price: number;
   available_seats: number;
   description: string;
+  departure_commune_id: number;
+  arrival_commune_id: number;
   id_users: number;
+  id_events: number;
   user: User;
   event?: Event | null;
 }
@@ -34,6 +39,7 @@ interface Housing {
   available_places: number;
   price: number;
   description: string;
+  id_events: number;
   event?: Event | null;
 }
 
@@ -46,6 +52,8 @@ export default function CommunityPage() {
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState<'rides' | 'housing'>('rides');
   const [activeCategory, setActiveCategory] = useState('Tous');
+  const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
+  const [selectedHousing, setSelectedHousing] = useState<Housing | null>(null);
 
   const fetchData = async () => {
     try {
@@ -237,7 +245,10 @@ export default function CommunityPage() {
                           <Calendar className="w-4 h-4" />
                           {new Date(ride.departure_time).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                         </div>
-                        <button className="bg-[#ff3c6e] text-white font-bold px-5 py-2 rounded text-sm hover:bg-[#e0203d] transition-colors">
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setSelectedRide(ride); }}
+                          className="bg-[#ff3c6e] text-white font-bold px-5 py-2 rounded text-sm hover:bg-[#e0203d] transition-colors"
+                        >
                           Réserver le trajet
                         </button>
                       </div>
@@ -295,7 +306,10 @@ export default function CommunityPage() {
                           <Users className="w-4 h-4" />
                           {housing.available_places} places restantes
                         </div>
-                        <button className="bg-[#ff3c6e] text-white font-bold px-5 py-2 rounded text-sm hover:bg-[#e0203d] transition-colors">
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setSelectedHousing(housing); }}
+                          className="bg-[#ff3c6e] text-white font-bold px-5 py-2 rounded text-sm hover:bg-[#e0203d] transition-colors"
+                        >
                           Réserver le logement
                         </button>
                       </div>
@@ -319,6 +333,22 @@ export default function CommunityPage() {
         </div>
 
       </div>
+
+      {selectedRide && (
+        <RideDetailModal
+          ride={selectedRide}
+          onClose={() => setSelectedRide(null)}
+          onSuccess={fetchData}
+        />
+      )}
+
+      {selectedHousing && (
+        <HousingDetailModal
+          housing={selectedHousing}
+          onClose={() => setSelectedHousing(null)}
+          onSuccess={fetchData}
+        />
+      )}
     </main>
   );
 }
