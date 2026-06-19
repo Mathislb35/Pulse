@@ -20,11 +20,9 @@ const CATEGORY_STYLES: Record<string, string> = {
     Concert:    'bg-[#ff3c6e]/10 text-[#ff3c6e] border-[#ff3c6e]/20',
     Festival:   'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
     Soiree:     'bg-purple-500/10 text-purple-400 border-purple-500/20',
-    Sport:      'bg-green-500/10 text-green-400 border-green-500/20',
-    Conference: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
 };
 
-const CATEGORIES = ['Tous', 'Concert', 'Festival', 'Soiree', 'Sport', 'Conference'];
+const CATEGORIES = ['Tous', 'Concert', 'Festival', 'Soiree'];
 const LOCATIONS   = ['Paris', 'Lyon', 'Marseille', 'Nantes', 'Bordeaux', 'Grenoble', 'Annecy', 'Clisson', 'Carhaix', 'Nice'];
 const MONTHS      = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
