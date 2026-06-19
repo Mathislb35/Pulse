@@ -9,9 +9,12 @@ const api = axios.create({
 
 // Ajoute le token JWT automatiquement sur chaque requête
 api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    // Vérifie si on est côté client avant d'accéder à localStorage
+    if (typeof window !== 'undefined') {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
     }
     return config;
 });

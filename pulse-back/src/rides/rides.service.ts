@@ -61,7 +61,7 @@ export class RidesService {
       where.departure_time = Between(startOfDay, endOfDay);
     }
 
-    return this.ridesRepository.find({
+    const rides = await this.ridesRepository.find({
       where,
       order: {
         departure_time: 'ASC',
@@ -69,7 +69,18 @@ export class RidesService {
       relations: {
         user: true,
         event: true,
+        reservations: true,
       },
+    });
+
+    // Calculer les places disponibles pour chaque trajet
+    return rides.map(ride => {
+      const confirmedReservations = ride.reservations.filter(res => res.status === 'confirmed');
+      const reservedSeats = confirmedReservations.reduce((sum, res) => sum + res.seats_reserved, 0);
+      return {
+        ...ride,
+        available_seats: ride.available_seats - reservedSeats
+      };
     });
   }
 
@@ -89,7 +100,14 @@ export class RidesService {
       throw new NotFoundException(`Le trajet ${id} est introuvable.`);
     }
 
-    return ride;
+    // Calculer les places disponibles
+    const confirmedReservations = ride.reservations.filter(res => res.status === 'confirmed');
+    const reservedSeats = confirmedReservations.reduce((sum, res) => sum + res.seats_reserved, 0);
+
+    return {
+      ...ride,
+      available_seats: ride.available_seats - reservedSeats
+    };
   }
 
   async update(
@@ -97,7 +115,7 @@ export class RidesService {
     updateRideDto: UpdateRideDto,
     userId: number,
   ): Promise<Ride> {
-    const ride = await this.findOne(id);
+    const ride = await this.findOneRaw(id);
     this.assertRideOwner(ride, userId);
 
     await this.ridesRepository.update(id, this.normalizeRidePayload(updateRideDto));
@@ -106,7 +124,7 @@ export class RidesService {
   }
 
   async remove(id: number, userId: number): Promise<void> {
-    const ride = await this.findOne(id);
+    const ride = await this.findOneRaw(id);
     this.assertRideOwner(ride, userId);
 
     await this.ridesRepository.delete(id);
@@ -140,12 +158,29 @@ export class RidesService {
     });
   }
 
+  private async findOneRaw(id: number): Promise<Ride> {
+    const ride = await this.ridesRepository.findOne({
+      where: { id_rides: id },
+      relations: {
+        user: true,
+        event: true,
+        reservations: true,
+      },
+    });
+
+    if (!ride) {
+      throw new NotFoundException(`Le trajet ${id} est introuvable.`);
+    }
+
+    return ride;
+  }
+
   async createReservation(
     rideId: number,
     createReservationDto: CreateRideReservationDto,
     userId: number,
   ): Promise<ReservationRide> {
-    const ride = await this.findOne(rideId);
+    const ride = await this.findOneRaw(rideId);
 
     if (ride.id_users === userId) {
       throw new ConflictException(
@@ -179,11 +214,11 @@ export class RidesService {
       0,
     );
 
+    const availableSeats = ride.available_seats - reservedSeats;
+
     if (reservedSeats + createReservationDto.seats_reserved > ride.available_seats) {
       throw new ConflictException(
-        `Il n'y a plus assez de places disponibles (${
-          ride.available_seats - reservedSeats
-        } restantes).`,
+        `Il n'y a plus assez de places disponibles (${availableSeats} restantes).`,
       );
     }
 
@@ -203,7 +238,7 @@ export class RidesService {
     updateReservationDto: UpdateRideReservationDto,
     userId: number,
   ): Promise<ReservationRide> {
-    const ride = await this.findOne(rideId);
+    const ride = await this.findOneRaw(rideId);
     this.assertRideOwner(ride, userId);
 
     const reservation = await this.getReservationOrFail(rideId, reservationId);

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { X, MapPin, Calendar, Clock, Users, ChevronLeft, MessageCircle } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import api from '../lib/axios';
 
 interface User {
   id: number;
@@ -34,12 +35,42 @@ interface Ride {
 interface Props {
   ride: Ride;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-export default function RideDetailModal({ ride, onClose }: Props) {
+export default function RideDetailModal({ ride, onClose, onSuccess }: Props) {
   const [seatsToReserve, setSeatsToReserve] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
   const { isAuthenticated } = useAuth();
   const router = useRouter();
+
+  const handleReservation = async () => {
+    console.log('handleReservation called');
+    console.log('ride.id_rides:', ride.id_rides);
+    console.log('seatsToReserve:', seatsToReserve);
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await api.post(`/rides/${ride.id_rides}/reservations`, {
+        seats_reserved: seatsToReserve,
+      });
+      console.log('Reservation response:', response);
+      setSuccess(true);
+      if (onSuccess) {
+        onSuccess();
+      }
+      setTimeout(() => {
+        onClose();
+      }, 2000);
+    } catch (err: any) {
+      console.error('Reservation error:', err);
+      setError(err.response?.data?.message || 'Erreur lors de la réservation');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -136,7 +167,12 @@ export default function RideDetailModal({ ride, onClose }: Props) {
           <div className="mb-6">
             <p className="text-white font-bold text-sm uppercase tracking-widest mb-3">Réserver</p>
             <div className="bg-[#0f0f1e] border border-white/8 rounded-xl p-4">
-              {isAuthenticated ? (
+              {success ? (
+                <div className="text-center py-6">
+                  <p className="text-green-400 font-bold text-lg mb-2">✓ Réservation confirmée !</p>
+                  <p className="text-white/40 text-sm">Vous allez être redirigé...</p>
+                </div>
+              ) : isAuthenticated ? (
                 <>
                   <div className="flex items-center justify-between mb-4">
                     <div>
@@ -146,26 +182,37 @@ export default function RideDetailModal({ ride, onClose }: Props) {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => setSeatsToReserve(Math.max(1, seatsToReserve - 1))}
-                        className="w-8 h-8 rounded-full bg-white/5 border border-white/10 text-white/50 hover:border-[#ff3c6e]/40 hover:text-[#ff3c6e] transition-all"
+                        disabled={loading}
+                        className="w-8 h-8 rounded-full bg-white/5 border border-white/10 text-white/50 hover:border-[#ff3c6e]/40 hover:text-[#ff3c6e] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         -
                       </button>
                       <span className="text-white font-bold w-8 text-center">{seatsToReserve}</span>
                       <button
                         onClick={() => setSeatsToReserve(Math.min(ride.available_seats, seatsToReserve + 1))}
-                        className="w-8 h-8 rounded-full bg-white/5 border border-white/10 text-white/50 hover:border-[#ff3c6e]/40 hover:text-[#ff3c6e] transition-all"
+                        disabled={loading}
+                        className="w-8 h-8 rounded-full bg-white/5 border border-white/10 text-white/50 hover:border-[#ff3c6e]/40 hover:text-[#ff3c6e] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         +
                       </button>
                     </div>
                   </div>
+                  {error && (
+                    <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                      <p className="text-red-400 text-sm">{error}</p>
+                    </div>
+                  )}
                   <div className="flex items-center justify-between pt-4 border-t border-white/8">
                     <div>
                       <p className="text-white/40 text-xs">Total</p>
                       <p className="text-white font-bold text-lg">{ride.price * seatsToReserve} €</p>
                     </div>
-                    <button className="bg-[#ff3c6e] hover:bg-[#e0203d] text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-colors">
-                      Réserver
+                    <button
+                      onClick={handleReservation}
+                      disabled={loading}
+                      className="bg-[#ff3c6e] hover:bg-[#e0203d] text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading ? 'Réservation en cours...' : 'Réserver'}
                     </button>
                   </div>
                 </>

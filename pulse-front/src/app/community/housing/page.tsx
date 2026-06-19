@@ -214,6 +214,7 @@ export default function HousingPage() {
         <HousingDetailModal
           housing={selectedHousing}
           onClose={() => setSelectedHousing(null)}
+          onSuccess={fetchHousings}
         />
       )}
 

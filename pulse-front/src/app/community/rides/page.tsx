@@ -243,6 +243,7 @@ export default function RidesPage() {
         <RideDetailModal
           ride={selectedRide}
           onClose={() => setSelectedRide(null)}
+          onSuccess={fetchRides}
         />
       )}
 

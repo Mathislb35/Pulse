@@ -28,10 +28,21 @@ export class HousingService {
   }
 
   async findAll(): Promise<Housing[]> {
-    return this.housingRepository.find({
+    const housings = await this.housingRepository.find({
       relations: {
         event: true,
+        reservations: true,
       },
+    });
+
+    // Calculer les places disponibles pour chaque logement
+    return housings.map(housing => {
+      const confirmedReservations = housing.reservations.filter(res => res.status === 'confirmed');
+      const reservedPlaces = confirmedReservations.reduce((sum, res) => sum + (res.places_reserved || 0), 0);
+      return {
+        ...housing,
+        available_places: housing.available_places - reservedPlaces
+      };
     });
   }
 
@@ -50,7 +61,14 @@ export class HousingService {
       throw new NotFoundException(`Le logement ${id} est introuvable.`);
     }
 
-    return housing;
+    // Calculer les places disponibles
+    const confirmedReservations = housing.reservations.filter(res => res.status === 'confirmed');
+    const reservedPlaces = confirmedReservations.reduce((sum, res) => sum + (res.places_reserved || 0), 0);
+
+    return {
+      ...housing,
+      available_places: housing.available_places - reservedPlaces
+    };
   }
 
   async update(id: number, updateHousingDto: UpdateHousingDto): Promise<Housing> {
@@ -85,12 +103,28 @@ export class HousingService {
     });
   }
 
+  private async findOneRaw(id: number): Promise<Housing> {
+    const housing = await this.housingRepository.findOne({
+      where: { id_housing: id },
+      relations: {
+        event: true,
+        reservations: true,
+      },
+    });
+
+    if (!housing) {
+      throw new NotFoundException(`Le logement ${id} est introuvable.`);
+    }
+
+    return housing;
+  }
+
   async createReservation(
     housingId: number,
     createDto: CreateHousingReservationDto,
     userId: number,
   ): Promise<ReservationHousing> {
-    const housing = await this.findOne(housingId);
+    const housing = await this.findOneRaw(housingId);
 
     // Logic: check if enough places
     const confirmedReservations = await this.reservationsRepository.find({
@@ -105,11 +139,11 @@ export class HousingService {
       0,
     );
 
+    const availablePlaces = housing.available_places - reservedPlaces;
+
     if (reservedPlaces + createDto.places_reserved > housing.available_places) {
       throw new ConflictException(
-        `Il n'y a plus assez de places disponibles (${
-          housing.available_places - reservedPlaces
-        } restantes).`,
+        `Il n'y a plus assez de places disponibles (${availablePlaces} restantes).`,
       );
     }
 
@@ -129,7 +163,7 @@ export class HousingService {
     updateDto: UpdateHousingReservationDto,
     userId: number,
   ): Promise<ReservationHousing> {
-    const housing = await this.findOne(housingId);
+    const housing = await this.findOneRaw(housingId);
     // In a real app, we'd check if the user is the owner of the event/housing
     // For now, let's assume any authenticated user can update (or add ownership logic if user entity has it)
     

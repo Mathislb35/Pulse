@@ -16,7 +16,7 @@ export class ReservationHousing {
   id_reserv_housing!: number;
 
   @ApiProperty({ description: 'Nombre de places réservées', example: 2 })
-  @Column({ name: 'places_reserved', nullable: true })
+  @Column({ name: 'places_reserved' })
   places_reserved!: number;
 
   @ApiProperty({ description: 'Statut de la réservation', example: 'pending' })
@@ -30,11 +30,11 @@ export class ReservationHousing {
 
   @ApiProperty({ description: 'Date d\'arrivée', example: '2025-12-25', required: false })
   @Column({ name: 'arrival_date', type: 'date', nullable: true })
-  arrival_date!: Date;
+  arrival_date?: Date;
 
   @ApiProperty({ description: 'Date de départ', example: '2025-12-30', required: false })
   @Column({ name: 'departure_date', type: 'date', nullable: true })
-  departure_date!: Date;
+  departure_date?: Date;
 
   @ApiProperty({ description: 'Identifiant du logement', example: 1 })
   @Column({ name: 'id_housing' })
