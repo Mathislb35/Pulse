@@ -25,3 +25,14 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Style select dropdowns and options */
+select {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+select option {
+  background-color: #0a0a14;
+  color: white;
+}

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { X, ChevronLeft, Users, DollarSign, Home } from 'lucide-react';
 import api from '../lib/axios';
+import { useAuth } from '../hooks/useAuth';
 
 interface Event {
   id_events: number;
@@ -18,6 +19,8 @@ interface Props {
 export default function CreateHousingModal({ onClose, onSuccess }: Props) {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const { isAuthenticated, requireAuth } = useAuth();
   const [formData, setFormData] = useState({
     price: '',
     available_places: '',
@@ -39,6 +42,13 @@ export default function CreateHousingModal({ onClose, onSuccess }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    
+    if (!isAuthenticated) {
+      requireAuth();
+      return;
+    }
+    
     setLoading(true);
     try {
       await api.post('/housing', {
@@ -49,7 +59,9 @@ export default function CreateHousingModal({ onClose, onSuccess }: Props) {
       });
       onSuccess();
       onClose();
-    } catch (err) {
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || 'Erreur lors de la création du logement. Veuillez vérifier que vous êtes connecté.';
+      setError(errorMessage);
       console.error("Erreur lors de la création du logement:", err);
     } finally {
       setLoading(false);
@@ -77,6 +89,12 @@ export default function CreateHousingModal({ onClose, onSuccess }: Props) {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4">
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/20 text-[#f87171] px-4 py-3 rounded-xl text-sm">
+              {error}
+            </div>
+          )}
+          
           {/* Événement */}
           <div className="flex flex-col gap-2">
             <label className="text-white/70 text-sm font-medium">Événement</label>
