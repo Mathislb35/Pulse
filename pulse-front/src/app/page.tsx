@@ -2,9 +2,21 @@
 
 import Link from 'next/link';
 import { MessageSquare, Car, Home, Search, SlidersHorizontal } from 'lucide-react';
-import {useState} from "react";
+import {useState, useEffect} from "react";
+import api from "../lib/axios";
 
 import EventDetailModal from "../component/modal_event";
+
+interface Event {
+    id_events: number;
+    title: string;
+    location: string;
+    category: string;
+    image_url: string;
+    start_date: string;
+    end_date: string;
+    description?: string;
+}
 
 const SERVICES = [
     {
@@ -24,51 +36,8 @@ const SERVICES = [
     },
 ];
 
-// Données fictives — à remplacer par un appel API vers GET /events
-const EVENTS = [
-    {
-        id: 1,
-        title: 'Nuit Électro — Warehouse',
-        location: 'Paris, 19e',
-        category: 'Concert',
-        image: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&q=80',
-    },
-    {
-        id: 2,
-        title: 'Festival Solstice',
-        location: "Lyon, Parc de la Tête d'Or",
-        category: 'Festival',
-        image: 'https://images.unsplash.com/photo-1506157786151-b8491531f063?w=400&q=80',
-    },
-    {
-        id: 3,
-        title: 'Soirée Rooftop',
-        location: 'Marseille, Le Vieux-Port',
-        category: 'Soiree',
-        image: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&q=80',
-    },
-    {
-        id: 4,
-        title: 'Dev Meetup Pulse',
-        location: 'Nantes, La Cantine',
-        category: 'Soiree',
-        image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400&q=80',
-    },
-    {
-        id: 5,
-        title: 'Vieille Charue',
-        location: 'Grenoble, Belledonne',
-        category: 'Festival',
-        image: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=400&q=80',
-    },
-    {
-        id: 6,
-        title: 'Jazz en Cave',
-        location: 'Bordeaux, Saint-Pierre',
-        category: 'Concert',
-        image: 'https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=400&q=80',
-    },
-];
+// Catégories pour les boutons filtres rapides
+const CATEGORIES = ['Tous', 'Concert', 'Festival', 'Rave'];
 
 // Couleur du badge selon la catégorie
 const CATEGORY_STYLES: Record<string, string> = {
@@ -77,21 +46,41 @@ const CATEGORY_STYLES: Record<string, string> = {
     Soiree: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
 };
 
-// Catégories pour les boutons filtres rapides
-const CATEGORIES = ['Tous', 'Concert', 'Festival', 'Rave'];
-
 // Filtres avancés dans le panneau de droite
 const LOCATIONS = ['Paris', 'Lyon', 'Marseille', 'Nantes', 'Bordeaux', 'Grenoble', 'Annecy'];
 const MONTHS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
 export default function HomePage() {
 
+    const [events, setEvents] = useState<Event[]>([]);
+    const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [activeCategory, setActiveCategory] = useState('Tous');
     const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
     const [selectedMonths, setSelectedMonths] = useState<string[]>([]);
 
     const [selectedEvent, setSelectedEvent] = useState<any>(null);
+
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const { data } = await api.get('/events');
+                setEvents(data);
+            } catch (err) {
+                console.error("Erreur lors de la récupération des événements:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchEvents();
+    }, []);
+
+    const filteredEvents = events.filter(event => {
+        const matchesSearch = event.title.toLowerCase().includes(search.toLowerCase()) || 
+                             event.location.toLowerCase().includes(search.toLowerCase());
+        const matchesCategory = activeCategory === 'Tous' || event.category === activeCategory;
+        return matchesSearch && matchesCategory;
+    });
 
     return (
         <main className="min-h-screen bg-[#080810] flex flex-col px-6 py-10 gap-12">
@@ -214,36 +203,48 @@ export default function HomePage() {
 
 
                 {/* Grille */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                    {EVENTS.map((event) => (
-                        <div
-                            key={event.id}
-                            onClick={() => setSelectedEvent(event)}
-                            className="bg-[#0f0f1a] border border-white/10 hover:border-[#ff3c6e] rounded-2xl overflow-hidden transition-colors cursor-pointer group"
-                        >
-                            {/* Image */}
-                            <div className="h-44 overflow-hidden">
-                                <img
-                                    src={event.image}
-                                    alt={event.title}
-                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                />
-                            </div>
+                {loading ? (
+                    <div className="w-full py-20 flex justify-center">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#ff3c6e]"></div>
+                    </div>
+                ) : filteredEvents.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        {filteredEvents.map((event) => (
+                            <div
+                                key={event.id_events}
+                                onClick={() => setSelectedEvent(event)}
+                                className="bg-[#0f0f1a] border border-white/10 hover:border-[#ff3c6e] rounded-2xl overflow-hidden transition-colors cursor-pointer group"
+                            >
+                                {/* Image */}
+                                <div className="h-44 overflow-hidden">
+                                    <img
+                                        src={event.image_url || 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&q=80'}
+                                        alt={event.title}
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    />
+                                </div>
 
-                            {/* Infos */}
-                            <div className="p-4 flex flex-col gap-2">
-                                {/* Badge catégorie */}
-                                <span className={`w-fit text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border ${CATEGORY_STYLES[event.category] ?? 'bg-white/5 text-white/40 border-white/10'}`}>
-                  {event.category}
-                </span>
-                                {/* Titre */}
-                                <h3 className="text-white font-bold text-base leading-snug">{event.title}</h3>
-                                {/* Lieu */}
-                                <p className="text-white/40 text-xs">📍 {event.location}</p>
+                                {/* Infos */}
+                                <div className="p-4 flex flex-col gap-2">
+                                    {/* Badge catégorie */}
+                                    {event.category && (
+                                        <span className={`w-fit text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border ${CATEGORY_STYLES[event.category] ?? 'bg-white/5 text-white/40 border-white/10'}`}>
+                                            {event.category}
+                                        </span>
+                                    )}
+                                    {/* Titre */}
+                                    <h3 className="text-white font-bold text-base leading-snug">{event.title}</h3>
+                                    {/* Lieu */}
+                                    <p className="text-white/40 text-xs">📍 {event.location}</p>
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="w-full py-20 text-center">
+                        <p className="text-white/40">Aucun événement trouvé.</p>
+                    </div>
+                )}
 
             </div>
 

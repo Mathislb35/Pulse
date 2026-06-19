@@ -16,7 +16,7 @@ async function bootstrap() {
 
   // ✅ Activer CORS pour ton front local
   app.enableCors({
-    origin: 'http://localhost:3000', // change selon le port de ton Next.js
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
@@ -25,15 +25,23 @@ async function bootstrap() {
     .setTitle('Pulse API')
     .setDescription('API documentation pour la plateforme Pulse')
     .setVersion('1.0')
-    .addTag('pulse')
+    .addBearerAuth()
+    .addTag('auth', 'Authentification des utilisateurs')
+    .addTag('users', 'Gestion des utilisateurs')
+    .addTag('events', 'Gestion des événements')
+    .addTag('rides', 'Gestion des covoiturages')
+    .addTag('housing', 'Gestion des logements')
+    .addTag('communes', 'Gestion des communes')
+    .addTag('messages', 'Gestion des messages')
     .build();
 
   const document = SwaggerModule.createDocument(app as any, config);
 
   SwaggerModule.setup('api', app as any, document);
 
-  await app.listen(3001);
-  console.log(`Swagger disponible sur: http://localhost:3001/api`);
+  const port = process.env.PORT || 3001;
+  await app.listen(port);
+  console.log(`Swagger disponible sur: http://localhost:${port}/api`);
 }
 
 bootstrap();

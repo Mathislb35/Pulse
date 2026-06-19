@@ -1,0 +1,14 @@
+{
+  "name": "pulse",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "pulse-back",
+    "pulse-front"
+  ],
+  "scripts": {
+    "back:dev": "npm run start:dev -w pulse-back",
+    "front:dev": "npm run dev -w pulse-front",
+    "dev": "npm run back:dev & npm run front:dev"
+  }
+}

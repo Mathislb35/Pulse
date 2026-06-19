@@ -31,16 +31,20 @@ export class AuthService {
     };
   }
 
-  async signUp(nom: string, email: string, password: string, phone: string): Promise<string> {
-    if (!nom || !password ||!email || !phone) {
-      throw new BadRequestException('Nom, email ou mot de passe requis.');
+  // Note: signUp is now just a wrapper, but better to use the controller directly with CreateUserDto
+  async signUp(nom: string, prenom: string, username: string, email: string, password: string, phone?: string, date_de_naissance?: string): Promise<string> {
+    if (!nom || !prenom || !username || !password || !email) {
+      throw new BadRequestException('Nom, prénom, nom d\'utilisateur, email et mot de passe sont requis.');
     }
 
     const userToCreate: CreateUserDto = {
       nom,
+      prenom,
+      username,
       email,
       password,
       phone,
+      date_de_naissance,
     };
 
     await this.usersService.create(userToCreate);

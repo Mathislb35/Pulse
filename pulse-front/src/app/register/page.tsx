@@ -5,10 +5,19 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import api from '../../lib/axios';
 import React from "react";
+import { Phone, Calendar } from 'lucide-react';
 
 export default function RegisterPage() {
     const router = useRouter();
-    const [form, setForm] = useState({ nom: '', email: '', password: '', phone: '' });
+    const [form, setForm] = useState({ 
+        nom: '', 
+        prenom: '', 
+        username: '', 
+        email: '', 
+        password: '', 
+        phone: '',
+        date_de_naissance: '' 
+    });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -25,15 +34,18 @@ export default function RegisterPage() {
             await api.post('/auth/register', form);
             router.push('/login');
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Une erreur est survenue.');
+            const errorMessage = Array.isArray(err.response?.data?.message) 
+                ? err.response?.data?.message.join(', ') 
+                : err.response?.data?.message || 'Une erreur est survenue.';
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <main className="min-h-screen bg-[#080810] flex items-center justify-center px-4">
-            <div className="w-full max-w-md">
+        <main className="min-h-screen bg-[#080810] flex items-center justify-center px-4 py-8">
+            <div className="w-full max-w-lg">
 
                 {/* Card */}
                 <div className="bg-[#0f0f1a] border border-white/10 rounded-2xl p-8">
@@ -51,7 +63,7 @@ export default function RegisterPage() {
                                 name="nom"
                                 value={form.nom}
                                 onChange={handleChange}
-                                placeholder="Ton prénom ou pseudo"
+                                placeholder="Votre nom"
                                 required
                                 className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[#ff3c6e]/60 transition-colors placeholder:text-white/20"
                             />
@@ -59,14 +71,44 @@ export default function RegisterPage() {
 
                         <div className="flex flex-col gap-2">
                             <label className="text-white/50 text-xs font-semibold uppercase tracking-widest">
-                                Email
+                                Prénom
+                            </label>
+                            <input
+                                type="text"
+                                name="prenom"
+                                value={form.prenom}
+                                onChange={handleChange}
+                                placeholder="Votre prénom"
+                                required
+                                className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[#ff3c6e]/60 transition-colors placeholder:text-white/20"
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-white/50 text-xs font-semibold uppercase tracking-widest">
+                                Nom d'utilisateur
+                            </label>
+                            <input
+                                type="text"
+                                name="username"
+                                value={form.username}
+                                onChange={handleChange}
+                                placeholder="Choisissez un nom d'utilisateur"
+                                required
+                                className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[#ff3c6e]/60 transition-colors placeholder:text-white/20"
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-white/50 text-xs font-semibold uppercase tracking-widest">
+                                Adresse e-mail
                             </label>
                             <input
                                 type="email"
                                 name="email"
                                 value={form.email}
                                 onChange={handleChange}
-                                placeholder="toi@exemple.com"
+                                placeholder="votre@email.com"
                                 required
                                 className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[#ff3c6e]/60 transition-colors placeholder:text-white/20"
                             />
@@ -76,14 +118,33 @@ export default function RegisterPage() {
                             <label className="text-white/50 text-xs font-semibold uppercase tracking-widest">
                                 Téléphone
                             </label>
-                            <input
-                                type="tel"
-                                name="phone"
-                                value={form.phone}
-                                onChange={handleChange}
-                                placeholder="06 00 00 00 00"
-                                className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[#ff3c6e]/60 transition-colors placeholder:text-white/20"
-                            />
+                            <div className="relative">
+                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 w-5 h-5" />
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    value={form.phone}
+                                    onChange={handleChange}
+                                    placeholder="XX XX XX XX XX"
+                                    className="bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white text-sm outline-none focus:border-[#ff3c6e]/60 transition-colors placeholder:text-white/20 w-full"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                            <label className="text-white/50 text-xs font-semibold uppercase tracking-widest">
+                                Date de naissance
+                            </label>
+                            <div className="relative">
+                                <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 w-5 h-5" />
+                                <input
+                                    type="date"
+                                    name="date_de_naissance"
+                                    value={form.date_de_naissance}
+                                    onChange={handleChange}
+                                    className="bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white text-sm outline-none focus:border-[#ff3c6e]/60 transition-colors placeholder:text-white/20 w-full"
+                                />
+                            </div>
                         </div>
 
                         <div className="flex flex-col gap-2">

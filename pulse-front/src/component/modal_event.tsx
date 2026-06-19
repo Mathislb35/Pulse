@@ -5,14 +5,14 @@ import { X, MapPin, Calendar, Clock, Ticket, ArrowRight, ExternalLink, ChevronLe
 
 /* ─── Types ─────────────────────────────────────────── */
 interface Event {
-    id: number;
+    id_events: number;
     title: string;
     location: string;
     category: string;
-    image: string;
+    image_url: string;
+    start_date: string;
+    end_date: string;
     // Champs optionnels enrichis (à brancher sur ton API)
-    date?: string;
-    time?: string;
     description?: string;
     price?: string;
     spots?: number;
@@ -120,7 +120,7 @@ export default function EventDetailModal({ event, onClose }: Props) {
                 {/* ── Hero ── */}
                 <div className="grid grid-cols-1 sm:grid-cols-[260px_1fr] gap-6 p-6">
                     <img
-                        src={event.image}
+                        src={event.image_url || 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&q=80'}
                         alt={event.title}
                         className="w-full aspect-[4/3] object-cover rounded-xl border border-white/10"
                     />
@@ -130,7 +130,10 @@ export default function EventDetailModal({ event, onClose }: Props) {
                         </span>
                         <h2 className="text-white font-bold text-2xl leading-tight">{event.title}</h2>
                         <div className="flex flex-wrap gap-3 text-white/40 text-xs">
-                            <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" />{event.date ?? '21 – 23 juin 2026'}</span>
+                            <span className="flex items-center gap-1">
+                                <Calendar className="w-3.5 h-3.5" />
+                                {new Date(event.start_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            </span>
                             <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{event.location}</span>
                         </div>
                         {event.tags && (

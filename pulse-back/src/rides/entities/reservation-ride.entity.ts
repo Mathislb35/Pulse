@@ -7,6 +7,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
 import { Ride } from './ride.entity';
 
 @Entity({ name: 'reservation_rides' })
@@ -16,18 +17,28 @@ import { Ride } from './ride.entity';
   unique: true,
 })
 export class ReservationRide {
+  @ApiProperty({ description: 'Identifiant unique de la réservation', example: 1 })
   @PrimaryGeneratedColumn({ name: 'id_reserv_rides' })
   id_reserv_rides!: number;
 
+  @ApiProperty({ description: 'Nombre de sièges réservés', example: 2 })
   @Column({ name: 'seats_reserved' })
   seats_reserved!: number;
 
-  @Column({ name: 'status', length: 50 })
-  status!: string;
+  @ApiProperty({ description: 'Statut de la réservation', example: 'pending' })
+  @Column({
+    name: 'status',
+    type: 'enum',
+    enum: ['pending', 'confirmed', 'cancelled'],
+    default: 'pending',
+  })
+  status!: 'pending' | 'confirmed' | 'cancelled';
 
+  @ApiProperty({ description: 'Identifiant du covoiturage', example: 1 })
   @Column({ name: 'id_rides' })
   id_rides!: number;
 
+  @ApiProperty({ description: 'Identifiant de l\'utilisateur', example: 1 })
   @Column({ name: 'id_users' })
   id_users!: number;
 

@@ -6,10 +6,12 @@ import React from "react";
 import {
     Home,
     Megaphone,
+    Car,
     MessagesSquare,
     Send,
     Briefcase,
 } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 const LINKS = [
     { label: 'Accueil', href: '/', icon: Home },
@@ -21,6 +23,7 @@ const LINKS = [
 
 export default function Navbar() {
     const pathname = usePathname();
+    const { isAuthenticated } = useAuth();
 
     return (
         <>
@@ -50,22 +53,24 @@ export default function Navbar() {
                             </Link>
                         ))}
 
-                        <Link
-                            href="/login"
-                            className="bg-[#ff3c6e] hover:bg-[#e0203d] text-white text-sm font-bold px-5 py-2 rounded-xl transition-colors"
-                        >
-                            Connexion
-                        </Link>
-
-                        <div className="flex justify-center">
-                            <Link href="/profile">
-                                <img
-                                    src="/user-round.svg"
-                                    className="w-8 bg-white/30 rounded-full"
-                                    alt="profile"
-                                />
+                        {!isAuthenticated ? (
+                            <Link
+                                href="/login"
+                                className="bg-[#ff3c6e] hover:bg-[#e0203d] text-white text-sm font-bold px-5 py-2 rounded-xl transition-colors"
+                            >
+                                Connexion
                             </Link>
-                        </div>
+                        ) : (
+                            <div className="flex justify-center">
+                                <Link href="/profile">
+                                    <img
+                                        src="/user-round.svg"
+                                        className="w-8 bg-white/30 rounded-full"
+                                        alt="profile"
+                                    />
+                                </Link>
+                            </div>
+                        )}
                     </div>
 
                 </nav>
