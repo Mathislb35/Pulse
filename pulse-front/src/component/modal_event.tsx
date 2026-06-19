@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { X, MapPin, Calendar, Clock, Ticket, ArrowRight, ExternalLink, ChevronLeft, ChevronRight, Heart } from 'lucide-react';
+import { X, MapPin, Calendar, Clock, Ticket, ArrowRight, ExternalLink, ChevronLeft, ChevronRight, Heart, House, CarFront } from 'lucide-react';
 
 /* ─── Types ─────────────────────────────────────────── */
 interface Event {
@@ -99,7 +99,7 @@ export default function EventDetailModal({ event, onClose }: Props) {
                 <div className="sticky top-0 z-10 flex items-center justify-between px-5 py-3 bg-[#0a0a14]/90 backdrop-blur-md border-b border-white/8">
                     <button
                         onClick={onClose}
-                        className="flex items-center gap-1.5 text-white/40 hover:text-white text-sm transition-colors"
+                        className=" cursor-pointer flex items-center gap-1.5 text-white/40 hover:text-white text-sm transition-colors"
                     >
                         <ChevronLeft className="w-4 h-4" /> Retour
                     </button>
@@ -202,8 +202,9 @@ export default function EventDetailModal({ event, onClose }: Props) {
                             <p className="text-white font-bold text-sm uppercase tracking-widest">Playlist officielle</p>
                             <p className="text-white/40 text-xs mt-0.5">Écoutez les artistes du festival</p>
                         </div>
-                        <button className="flex items-center gap-1.5 border border-green-500/30 text-green-400 hover:bg-green-500/8 px-3 py-1.5 rounded-lg text-xs transition-all">
-                            🎵 Ouvrir sur Spotify
+                        <button className="cursor-pointer flex items-center gap-1.5 border border-green-500/30 text-green-400 hover:bg-green-500/10 px-3 py-1.5 rounded-lg text-xs transition-all">
+                            Ouvrir sur Spotify
+                            <img src="/spotifyLogo.png" className="w-4 h-4" />
                         </button>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-4">
@@ -238,7 +239,7 @@ export default function EventDetailModal({ event, onClose }: Props) {
                     <div className="bg-[#0f0f1e] border border-white/8 rounded-xl p-4">
                         <div className="flex items-start justify-between mb-3">
                             <div>
-                                <p className="text-white/60 text-lg mb-1">🚗</p>
+                                <CarFront />
                                 <p className="text-white font-bold text-sm uppercase tracking-wider">Covoiturage</p>
                                 <p className="text-white/30 text-xs mt-0.5">Trouvez un trajet pour vous rendre au festival.</p>
                             </div>
@@ -273,7 +274,7 @@ export default function EventDetailModal({ event, onClose }: Props) {
                     <div className="bg-[#0f0f1e] border border-white/8 rounded-xl p-4">
                         <div className="flex items-start justify-between mb-3">
                             <div>
-                                <p className="text-white/60 text-lg mb-1">🏠</p>
+                                <House />
                                 <p className="text-white font-bold text-sm uppercase tracking-wider">Logements à proximité</p>
                                 <p className="text-white/30 text-xs mt-0.5">Trouvez un logement près du festival.</p>
                             </div>
@@ -285,7 +286,7 @@ export default function EventDetailModal({ event, onClose }: Props) {
                             {lodgings.map((l, i) => (
                                 <div key={i} className="min-w-[130px] border border-white/8 hover:border-[#ff3c6e]/30 rounded-xl overflow-hidden bg-white/3 cursor-pointer transition-colors group shrink-0">
                                     <div className="h-20 bg-white/5 flex items-center justify-center text-2xl relative">
-                                        🏡
+                                        <House />
                                         <button className="absolute top-2 right-2 text-white/30 hover:text-[#ff3c6e] text-sm transition-colors">♡</button>
                                     </div>
                                     <div className="p-2">

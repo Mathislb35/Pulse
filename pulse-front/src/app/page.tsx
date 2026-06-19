@@ -168,7 +168,7 @@ export default function HomePage() {
                             <Link href="/events" className="bg-[#ff3c6e] hover:bg-[#e0203d] text-white font-bold px-6 py-3 rounded-xl transition-colors text-sm">
                                 Voir la liste
                             </Link>
-                            <Link href="/events" className="bg-[#ff3c6e] hover:bg-[#e0203d] text-white font-bold px-6 py-3 rounded-xl transition-colors text-sm cursor-not-allowed">
+                            <Link href="" className="bg-[#ff3c6e] hover:bg-[#e0203d] text-white font-bold px-6 py-3 rounded-xl transition-colors text-sm cursor-not-allowed">
                                 Voir la carte
                             </Link>
                         </div>
