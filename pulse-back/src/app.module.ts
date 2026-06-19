@@ -10,6 +10,7 @@ import { MessagesModule } from './messages/messages.module';
 import { HousingModule } from './housing/housing.module';
 import { AuthModule } from './auth/auth.module';
 import { CommunesModule } from './communes/communes.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -32,7 +33,8 @@ import { CommunesModule } from './communes/communes.module';
     MessagesModule, 
     HousingModule, 
     AuthModule,
-    CommunesModule],
+    CommunesModule,
+    UploadModule],
   
   controllers: [AppController],
   providers: [AppService],

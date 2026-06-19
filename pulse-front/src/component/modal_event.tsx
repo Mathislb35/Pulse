@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { X, MapPin, Calendar, Clock, Ticket, ArrowRight, ExternalLink, ChevronLeft, ChevronRight, Heart, House, CarFront } from 'lucide-react';
+import { formatImageUrl } from '../lib/image';
 
 /* ─── Types ─────────────────────────────────────────── */
 interface Event {
@@ -120,7 +121,7 @@ export default function EventDetailModal({ event, onClose }: Props) {
                 {/* ── Hero ── */}
                 <div className="grid grid-cols-1 sm:grid-cols-[260px_1fr] gap-6 p-6">
                     <img
-                        src={event.image_url || 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&q=80'}
+                        src={formatImageUrl(event.image_url)}
                         alt={event.title}
                         className="w-full aspect-[4/3] object-cover rounded-xl border border-white/10"
                     />

@@ -40,7 +40,7 @@ export default function Footer() {
                 <div>
                     <h3 className="text-white font-semibold mb-4">Communauté</h3>
                     <ul className="flex flex-col gap-2 text-white/40">
-                        <li><Link href="/carpool" className="hover:text-white">Covoiturage</Link></li>
+                        <li><Link href="/rides" className="hover:text-white">Covoiturage</Link></li>
                         <li><Link href="/housing" className="hover:text-white">Logements</Link></li>
                         <li><Link href="/discussions" className="hover:text-white">Discussions</Link></li>
                     </ul>

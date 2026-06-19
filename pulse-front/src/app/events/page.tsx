@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import api from "../../lib/axios";
+import { formatImageUrl } from "../../lib/image";
 import EventDetailModal from "../../component/modal_event";
 
 interface Event {
@@ -139,7 +140,7 @@ export default function EventsPage() {
                                         {/* Image */}
                                         <div className="h-44 overflow-hidden">
                                             <img
-                                                src={event.image_url || 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&q=80'}
+                                                src={formatImageUrl(event.image_url)}
                                                 alt={event.title}
                                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                             />

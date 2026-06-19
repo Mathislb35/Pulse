@@ -2,9 +2,11 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { join } from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -21,6 +23,11 @@ async function bootstrap() {
     credentials: true,
   });
 
+  // ✅ Servir les fichiers statiques (images uploadées)
+  app.useStaticAssets(join(process.cwd(), 'uploads'), {
+    prefix: '/uploads',
+  });
+
   const config = new DocumentBuilder()
     .setTitle('Pulse API')
     .setDescription('API documentation pour la plateforme Pulse')
@@ -33,6 +40,7 @@ async function bootstrap() {
     .addTag('housing', 'Gestion des logements')
     .addTag('communes', 'Gestion des communes')
     .addTag('messages', 'Gestion des messages')
+    .addTag('upload', 'Téléchargement de fichiers')
     .build();
 
   const document = SwaggerModule.createDocument(app as any, config);

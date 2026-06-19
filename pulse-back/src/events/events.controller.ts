@@ -26,6 +26,13 @@ export class EventsController {
     return this.eventsService.findAll();
   }
 
+  @Get('organizer/:organizerId')
+  @ApiOperation({ summary: 'Récupérer les événements d\'un organisateur' })
+  @ApiResponse({ status: 200, description: 'Liste des événements récupérée avec succès' })
+  findByOrganizer(@Param('organizerId') organizerId: string) {
+    return this.eventsService.findByOrganizer(+organizerId);
+  }
+
   @Public()
   @Get(':id')
   @ApiOperation({ summary: 'Récupérer un événement par son identifiant' })
