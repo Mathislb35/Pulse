@@ -37,9 +37,16 @@ export function useAuth() {
     return true;
   };
 
+  const logout = () => {
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
+    router.push('/login');
+  };
+
   return {
     isAuthenticated,
     loading,
     requireAuth,
+    logout,
   };
 }

@@ -13,6 +13,7 @@ import {
     Edit3,
 } from 'lucide-react';
 import api from '../../lib/axios';
+import { useAuth } from '../../hooks/useAuth';
 
 interface UserData {
     id: number;
@@ -28,6 +29,7 @@ export default function ProfilePage() {
     const [activeTab, setActiveTab] = useState('informations');
     const [user, setUser] = useState<UserData | null>(null);
     const [loading, setLoading] = useState(true);
+    const { logout } = useAuth();
 
     const sidebarItems = [
         { label: 'Mon profil', icon: User, active: true },
@@ -37,7 +39,6 @@ export default function ProfilePage() {
         { label: 'Mes favoris', icon: Heart, active: false },
         { label: 'Mes annonces', icon: MessageSquare, active: false },
         { label: 'Paramètres', icon: Settings, active: false },
-        { label: 'Se déconnecter', icon: LogOut, active: false },
     ];
 
     const tabs = [
@@ -112,6 +113,13 @@ export default function ProfilePage() {
                                 {item.label}
                             </button>
                         ))}
+                        <button
+                            onClick={logout}
+                            className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors text-white/60 hover:text-white hover:bg-white/5"
+                        >
+                            <LogOut size={18} />
+                            Se déconnecter
+                        </button>
                     </nav>
                 </div>
 
