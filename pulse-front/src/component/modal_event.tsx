@@ -30,11 +30,16 @@ interface Props {
 }
 
 /* ─── Styles badge catégorie ─────────────────────────── */
-const CATEGORY_STYLES: Record<string, string> = {
-    Concert: 'bg-[#ff3c6e]/10 text-[#ff3c6e] border-[#ff3c6e]/20',
-    Festival: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
-    Soiree: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-};
+const RAINBOW_COLORS = [
+    { bg: 'bg-red-500/10', text: 'text-red-400', border: 'border-red-500/20' },
+    { bg: 'bg-orange-500/10', text: 'text-orange-400', border: 'border-orange-500/20' },
+    { bg: 'bg-yellow-500/10', text: 'text-yellow-400', border: 'border-yellow-500/20' },
+    { bg: 'bg-green-500/10', text: 'text-green-400', border: 'border-green-500/20' },
+    { bg: 'bg-purple-500/10', text: 'text-purple-400', border: 'border-purple-500/20' },
+    { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/20' },
+];
+
+const getRandomColor = () => RAINBOW_COLORS[Math.floor(Math.random() * RAINBOW_COLORS.length)];
 
 /* ─── Données de démo (fallback si l'API ne les fournit pas encore) ── */
 const DEFAULT_ARTISTS = Array.from({ length: 8 }, (_, i) => ({ name: `Artiste ${i + 1}`, genre: 'Electro' }));
@@ -63,6 +68,7 @@ const DEFAULT_LODGINGS = Array.from({ length: 3 }, () => ({
 export default function EventDetailModal({ event, onClose }: Props) {
     const [isFav, setIsFav] = useState(false);
     const artistsScrollRef = useRef<HTMLDivElement>(null);
+    const randomColor = getRandomColor();
 
     // Fermeture avec Escape
     useEffect(() => {
@@ -126,7 +132,7 @@ export default function EventDetailModal({ event, onClose }: Props) {
                         className="w-full aspect-[4/3] object-cover rounded-xl border border-white/10"
                     />
                     <div className="flex flex-col gap-3">
-                        <span className={`w-fit text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border ${CATEGORY_STYLES[event.category] ?? 'bg-white/5 text-white/40 border-white/10'}`}>
+                        <span className={`w-fit text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border ${randomColor.bg} ${randomColor.text} ${randomColor.border}`}>
                             {event.category}
                         </span>
                         <h2 className="text-white font-bold text-2xl leading-tight">{event.title}</h2>

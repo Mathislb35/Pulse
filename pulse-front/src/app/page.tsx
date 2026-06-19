@@ -40,12 +40,17 @@ const SERVICES = [
 // Catégories pour les boutons filtres rapides
 const CATEGORIES = ['Tous', 'Concert', 'Festival', 'Rave'];
 
-// Couleur du badge selon la catégorie
-const CATEGORY_STYLES: Record<string, string> = {
-    Concert: 'bg-[#ff3c6e]/10 text-[#ff3c6e] border-[#ff3c6e]/20',
-    Festival: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
-    Soiree: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-};
+// Couleurs arc-en-ciel pour les badges de catégorie
+const RAINBOW_COLORS = [
+    { bg: 'bg-red-500/10', text: 'text-red-400', border: 'border-red-500/20' },
+    { bg: 'bg-orange-500/10', text: 'text-orange-400', border: 'border-orange-500/20' },
+    { bg: 'bg-yellow-500/10', text: 'text-yellow-400', border: 'border-yellow-500/20' },
+    { bg: 'bg-green-500/10', text: 'text-green-400', border: 'border-green-500/20' },
+    { bg: 'bg-purple-500/10', text: 'text-purple-400', border: 'border-purple-500/20' },
+    { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/20' },
+];
+
+const getRandomColor = () => RAINBOW_COLORS[Math.floor(Math.random() * RAINBOW_COLORS.length)];
 
 // Filtres avancés dans le panneau de droite
 const LOCATIONS = ['Paris', 'Lyon', 'Marseille', 'Nantes', 'Bordeaux', 'Grenoble', 'Annecy'];
@@ -210,36 +215,39 @@ export default function HomePage() {
                     </div>
                 ) : filteredEvents.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                        {filteredEvents.map((event) => (
-                            <div
-                                key={event.id_events}
-                                onClick={() => setSelectedEvent(event)}
-                                className="bg-[#0f0f1a] border border-white/10 hover:border-[#ff3c6e] rounded-2xl overflow-hidden transition-colors cursor-pointer group"
-                            >
-                                {/* Image */}
-                                <div className="h-44 overflow-hidden">
-                                    <img
-                                        src={formatImageUrl(event.image_url)}
-                                        alt={event.title}
-                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                    />
-                                </div>
+                        {filteredEvents.map((event) => {
+                            const randomColor = getRandomColor();
+                            return (
+                                <div
+                                    key={event.id_events}
+                                    onClick={() => setSelectedEvent(event)}
+                                    className="bg-[#0f0f1a] border border-white/10 hover:border-[#ff3c6e] rounded-2xl overflow-hidden transition-colors cursor-pointer group"
+                                >
+                                    {/* Image */}
+                                    <div className="h-44 overflow-hidden">
+                                        <img
+                                            src={formatImageUrl(event.image_url)}
+                                            alt={event.title}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        />
+                                    </div>
 
-                                {/* Infos */}
-                                <div className="p-4 flex flex-col gap-2">
-                                    {/* Badge catégorie */}
-                                    {event.category && (
-                                        <span className={`w-fit text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border ${CATEGORY_STYLES[event.category] ?? 'bg-white/5 text-white/40 border-white/10'}`}>
-                                            {event.category}
-                                        </span>
-                                    )}
+                                    {/* Infos */}
+                                    <div className="p-4 flex flex-col gap-2">
+                                        {/* Badge catégorie */}
+                                        {event.category && (
+                                            <span className={`w-fit text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border ${randomColor.bg} ${randomColor.text} ${randomColor.border}`}>
+                                                {event.category}
+                                            </span>
+                                        )}
                                     {/* Titre */}
                                     <h3 className="text-white font-bold text-base leading-snug">{event.title}</h3>
                                     {/* Lieu */}
                                     <p className="text-white/40 text-xs">📍 {event.location}</p>
                                 </div>
                             </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 ) : (
                     <div className="w-full py-20 text-center">
