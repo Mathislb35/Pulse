@@ -92,7 +92,7 @@ export class RidesController {
   findReservations(@Param('id', ParseIntPipe) id: number) {
     return this.ridesService.findReservations(id);
   }
-
+ //Réserver un covoiturage
   @Post(':id/reservations')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Réserver un covoiturage' })
@@ -109,7 +109,8 @@ export class RidesController {
       req.user.id,
     );
   }
-
+  
+ //Mettre à jour réservations
   @Patch(':rideId/reservations/:reservationId')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Mettre à jour le statut d\'une réservation' })
@@ -128,7 +129,7 @@ export class RidesController {
       req.user.id,
     );
   }
-
+ //Annuler réservation
   @Delete(':rideId/reservations/:reservationId')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Annuler une réservation' })

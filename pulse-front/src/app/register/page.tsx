@@ -16,22 +16,31 @@ export default function RegisterPage() {
         email: '', 
         password: '', 
         phone: '',
-        date_de_naissance: '' 
+        date_de_naissance: '',
+        acceptCGU: false
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        const { name, value, type, checked } = e.target;
+        setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+
+        if (!form.acceptCGU) {
+            setError('Vous devez accepter les CGU et la politique de confidentialité.');
+            return;
+        }
+
         setLoading(true);
 
         try {
-            await api.post('/auth/register', form);
+            const { acceptCGU, ...formData } = form;
+            await api.post('/auth/register', formData);
             router.push('/login');
         } catch (err: any) {
             const errorMessage = Array.isArray(err.response?.data?.message) 
@@ -160,6 +169,27 @@ export default function RegisterPage() {
                                 required
                                 className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[#ff3c6e]/60 transition-colors placeholder:text-white/20"
                             />
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                            <input
+                                type="checkbox"
+                                name="acceptCGU"
+                                id="acceptCGU"
+                                checked={form.acceptCGU}
+                                onChange={handleChange}
+                                className="mt-1 w-4 h-4 accent-[#ff3c6e] cursor-pointer"
+                            />
+                            <label htmlFor="acceptCGU" className="text-white/40 text-sm leading-relaxed">
+                                J'accepte les{' '}
+                                <Link href="/cgu" className="text-[#ff3c6e] hover:underline">
+                                    CGU
+                                </Link>{' '}
+                                et la{' '}
+                                <Link href="/cgu" className="text-[#ff3c6e] hover:underline">
+                                    politique de confidentialité
+                                </Link>
+                            </label>
                         </div>
 
                         {error && (
